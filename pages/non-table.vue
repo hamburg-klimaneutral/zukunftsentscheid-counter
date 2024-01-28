@@ -17,10 +17,13 @@
 </template>
 
 <script setup lang="ts">
-import { onKeyStroke } from '@vueuse/core'
+import {
+  onKeyStroke,
+  useLocalStorage,
+} from '@vueuse/core'
 
 const counter = [1, 2, 3, 4, 5]
-const sum = ref(0)
+const sum = useLocalStorage('sum', 0)
 
 function add(count: number) {
   sum.value += count
