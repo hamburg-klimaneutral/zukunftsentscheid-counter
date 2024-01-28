@@ -29,10 +29,27 @@ import { onKeyStroke, useLocalStorage } from '@vueuse/core'
 
 const sum = useLocalStorage('sum', 0)
 
+function supportsVibration() {
+  return 'vibrate' in navigator || typeof navigator.vibrate === 'function'
+}
+
+watch(sum, (value, oldValue) => {
+  if(oldValue < 100 && value >= 100 && supportsVibration()) {
+    console.log('100 DONE')
+    if(!supportsVibration()) {
+      return
+    }
+    navigator.vibrate([200, 100, 200])
+  }
+})
+
 const counter = [1, 2, 3, 4, 5]
 
 function add(count: number) {
   sum.value += count
+  if(supportsVibration()) {
+    navigator.vibrate(200)
+  }
 }
 
 function reset() {
