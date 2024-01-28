@@ -29,17 +29,20 @@ import { onKeyStroke, useLocalStorage } from '@vueuse/core'
 
 const sum = useLocalStorage('sum', 0)
 
-function supportsVibration() {
-  return 'vibrate' in navigator || typeof navigator.vibrate === 'function'
+const GOAL = 100
+
+function tryVibrate(pattern: VibratePattern) {
+  try {
+    navigator.vibrate(pattern)
+  } catch(e) {
+    console.debug('cannot vibrate')
+  }
 }
 
 watch(sum, (value, oldValue) => {
-  if(oldValue < 100 && value >= 100 && supportsVibration()) {
-    console.log('100 DONE')
-    if(!supportsVibration()) {
-      return
-    }
-    navigator.vibrate([200, 100, 200])
+  if(oldValue < GOAL && value >= GOAL) {
+    console.log('GOAL REACHED')
+    tryVibrate([200, 100, 200])
   }
 })
 
@@ -47,9 +50,7 @@ const counter = [1, 2, 3, 4, 5]
 
 function add(count: number) {
   sum.value += count
-  if(supportsVibration()) {
-    navigator.vibrate(200)
-  }
+  tryVibrate([200])
 }
 
 function reset() {
@@ -71,6 +72,10 @@ table {
   font-family: Inter, sans-serif;
   font-weight: bold;
   text-align: center;
+}
+
+.goalReached .sum {
+  background-color: #cc0070;
 }
 
 .sum {
